@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private float jumpForce = 10.0f;
-    private float GravityModifier = 2.0f;
+    private Animator playerAnimator;
+    private float jumpForce = 500.0f;
+    private float GravityModifier = 1.5f;
     public bool isOnGround = true;
     public bool gameOver = false;
 
@@ -15,15 +16,19 @@ public class PlayerController : MonoBehaviour
     {
         playerRB = GetComponent<Rigidbody>();
         Physics.gravity *= GravityModifier;
+
+        playerAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameOver)
         {
             playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
+
+            playerAnimator.SetTrigger("Jump_trig");
         }
     }
 
@@ -36,6 +41,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Game Over");
             gameOver = true;
+            playerAnimator.SetBool("Death_b", true);
+            playerAnimator.SetInteger("DeathType_int", 1);
         }
         
     }
